@@ -28,7 +28,7 @@ gulp.task('js', function() {
         }))
         .pipe(browserify())
         .pipe(minify())
-        .pipe(gulp.dest('./public/assets/js'))
+        .pipe(gulp.dest('./public/assets/dist'))
 });
 
 gulp.task('sass', function() {
@@ -36,7 +36,7 @@ gulp.task('sass', function() {
         .pipe(sass())
         .pipe(concatCss("main.css"))
         .pipe(cleanCSS())
-        .pipe(gulp.dest("./public/assets/css"))
+        .pipe(gulp.dest("./public/assets/dist"))
         .pipe(browserSync.stream());
 });
 
