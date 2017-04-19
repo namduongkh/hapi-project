@@ -18,7 +18,6 @@ gulp.task('nodemon', () => {
         }
     })
 });
-
 // process JS files and return the stream.
 // js in client
 gulp.task('js', function() {
