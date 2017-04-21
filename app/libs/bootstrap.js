@@ -1,8 +1,6 @@
 'use strict';
 
-const Good = require('good');
 const Path = require('path');
-const Vision = require('vision');
 const Glob = require("glob");
 
 var assets = {
@@ -28,11 +26,11 @@ var assets = {
 
 module.exports = function(server) {
     server.register([{
-        register: Vision
+        register: require('vision')
     }, {
         register: require('inert')
     }, {
-        register: Good,
+        register: require('good'),
         options: {
             reporters: {
                 console: [{

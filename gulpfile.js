@@ -8,6 +8,7 @@ var cleanCSS = require('gulp-clean-css');
 var concatCss = require('gulp-concat-css');
 var minify = require('gulp-minify');
 const babel = require('gulp-babel');
+var purgeSourcemaps = require('gulp-purge-sourcemaps');
 
 gulp.task('nodemon', () => {
     nodemon({
@@ -26,6 +27,7 @@ gulp.task('js', function() {
         .pipe(babel({
             presets: ['es2015']
         }))
+        .pipe(purgeSourcemaps())
         .pipe(browserify())
         .pipe(minify())
         .pipe(gulp.dest('./public/assets/dist'))
