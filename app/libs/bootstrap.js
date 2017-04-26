@@ -3,27 +3,6 @@
 const Path = require('path');
 const Glob = require("glob");
 
-var assets = {
-    js: [
-        '/libs/angular/angular.min.js',
-        '/template/js/jquery.js',
-        '/template/js/bootstrap.min.js',
-        // '/template/js/plugins/morris/raphael.min.js',
-        // '/template/js/plugins/morris/morris.min.js',
-        // '/template/js/plugins/morris/morris-data.js',
-        '/libs/clipboard/dist/clipboard.min.js',
-        '/libs/ngclipboard/dist/ngclipboard.min.js',
-        '/dist/main.js',
-    ],
-    css: [
-        '/dist/main.css',
-        '/template/css/bootstrap.min.css',
-        '/template/css/sb-admin.css',
-        // '/template/css/plugins/morris.css',
-        '/template/font-awesome/css/font-awesome.min.css',
-    ]
-};
-
 module.exports = function(server) {
     server.register([{
         register: require('vision')
@@ -46,39 +25,43 @@ module.exports = function(server) {
             }
         }
     }, {
+        // Plugin xử lý để load các file tĩnh
         register: require('./static.js')
     }, {
+        // Kết nối mongodb
         register: require('./mongo.js')
     }], (err) => {
         if (err) {
             server.log(['error', 'server'], err);
         }
 
+        let config = server.configManager;
 
+        // Cài đặt template engine: Đang sử dụng handlebars
         server.views({
             engines: {
-                // html: require('handlebars'),
-                html: require('./nunjucks-hapi'),
+                html: require('handlebars'),
             },
-            // helpersPath: global.BASE_PATH + '/helpers',
+            helpersPath: global.BASE_PATH + '/app/views/helpers',
             relativeTo: global.BASE_PATH + '/app/modules',
-            // partialsPath: global.BASE_PATH + '/layouts/partials',
-            // layoutPath: global.BASE_PATH + '/layouts',
-            // layout: true,
+            partialsPath: global.BASE_PATH + '/app/views/layouts/partials',
+            layoutPath: global.BASE_PATH + '/app/views/layouts/layouts',
+            layout: true,
             context: {
-                assets: assets,
+                assets: config.get("web.assets"),
                 meta: {
                     title: 'Helper'
                 }
             }
         });
 
+        // Load các model trong các module
         let models = Glob.sync(BASE_PATH + "/app/modules/*/model/*.js", {});
         models.forEach((item) => {
-            // console.log("Model", item);
             require(Path.resolve(item));
         });
 
+        // Tùy theo từng connection của từng label mà load các route trong các module thuộc label đó vào
         server.connections.forEach(function(connectionSetting) {
             let labels = connectionSetting.settings.labels;
             labels.forEach(name => {
@@ -95,6 +78,7 @@ module.exports = function(server) {
                     });
                 }
             });
-        })
+        });
+
     });
 };

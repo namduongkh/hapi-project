@@ -5,6 +5,7 @@ const Path = require('path');
 
 global.BASE_PATH = __dirname;
 
+// Tạo server hapi
 const server = new Hapi.Server({
     connections: {
         routes: {
@@ -15,34 +16,31 @@ const server = new Hapi.Server({
     }
 });
 
+// Module hapi-kea-config: 
+// Cần tồn tại 3 file trong thư mục /app/config 
+// main.conf.js, development.conf.js, production.conf.js
 server.register({
     register: require('hapi-kea-config'),
     options: {
         confPath: BASE_PATH + '/app/config',
         decorateServer: true
     }
-}, function(err) {
-    console.log("Err", err);
 });
 
 var config = server.plugins['hapi-kea-config'];
 
-// var connections = config.get("connections")
+var connections = config.get("web.connections")
 
-server.connection({
-    port: 3000,
-    labels: 'web'
-});
+// Thiết lập connection, chia port...
+connections.forEach(function(config) {
+    server.connection(config);
+}, this);
 
-server.connection({
-    port: 4000,
-    labels: 'cms'
-});
-
+// Đăng ký các plugin khác
 require("./app/libs/bootstrap.js")(server);
 
+// Chạy server
 server.start((err) => {
-
     if (err) {
         throw err;
     }
@@ -50,3 +48,5 @@ server.start((err) => {
         console.log("Server running:", connectionSetting.info.port);
     });
 });
+
+module.exports = server;
