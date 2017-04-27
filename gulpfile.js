@@ -13,7 +13,7 @@ var purgeSourcemaps = require('gulp-purge-sourcemaps');
 gulp.task('nodemon', () => {
     nodemon({
         script: 'app.js',
-        ext: 'js html scss json',
+        ext: 'js html scss json css',
         env: {
             'NODE_ENV': 'development'
         }
@@ -22,7 +22,12 @@ gulp.task('nodemon', () => {
 // process JS files and return the stream.
 // js in client
 gulp.task('js', function() {
-    return gulp.src(['public/assets/js/*.js', 'app/modules/*/views/js/config.js', 'app/modules/*/views/js/*.js'])
+    return gulp.src([
+            'public/assets/js/**/*.js',
+            'public/assets/js/*.js',
+            'app/modules/*/views/js/config.js',
+            'app/modules/*/views/js/*.js'
+        ])
         .pipe(concat('main.js'))
         .pipe(babel({
             presets: ['es2015']
@@ -34,11 +39,11 @@ gulp.task('js', function() {
 });
 
 gulp.task('sass', function() {
-    return gulp.src("app/modules/*/views/css/*.scss")
+    return gulp.src(['public/assets/**/*.css', 'app/modules/*/views/css/*.scss'])
         .pipe(sass())
-        .pipe(concatCss("main.css"))
+        .pipe(concatCss('main.css'))
         .pipe(cleanCSS())
-        .pipe(gulp.dest("./public/assets/dist"))
+        .pipe(gulp.dest('./public/assets/dist'))
         .pipe(browserSync.stream());
 });
 
@@ -76,7 +81,13 @@ gulp.task('browser-sync', ['nodemon'], function() {
 });
 
 gulp.task('default', ['nodemon', 'browser-sync', 'sass', 'js'], function() {
-    gulp.watch('app/modules/*/views/css/*.scss', ['sass']);
-    gulp.watch(['public/assets/js/*.js', 'app/modules/*/views/js/config.js', 'app/modules/*/views/js/*.js'], ['js']);
-    gulp.watch(['app/views/layouts/**/*.html', 'app/modules/**/*.html']).on('change', browserSync.reload);
+    gulp.watch('app/modules/*/views/**/*.scss', ['sass']);
+    gulp.watch([
+        'public/assets/js/**/*.js',
+        'public/assets/js/*.js',
+        'app/modules/*/views/js/config.js',
+        'app/modules/*/views/js/*.js'
+    ], ['js']);
+    gulp.watch(['app/views/layouts/**/*.html', 'app/modules/**/*.html'])
+        .on('change', browserSync.reload);
 });

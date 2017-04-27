@@ -2,24 +2,30 @@
 
 module.exports = {
     web: {
+        settings: {
+            services: {
+                apiUrl: 'http://localhost:3100',
+                webUrl: 'http://localhost:3000',
+            },
+            socialUrl: {},
+            ghn_tracking: 'http://103.20.148.181:24167/Tracking/ViewTracking/',
+        },
         assets: {
             js: [
+                '/libs/jquery/dist/jquery.min.js',
                 '/libs/angular/angular.min.js',
-                '/template/js/jquery.js',
-                '/template/js/bootstrap.min.js',
-                // '/template/js/plugins/morris/raphael.min.js',
-                // '/template/js/plugins/morris/morris.min.js',
-                // '/template/js/plugins/morris/morris-data.js',
-                '/libs/clipboard/dist/clipboard.min.js',
-                '/libs/ngclipboard/dist/ngclipboard.min.js',
-                '/dist/main.js',
+                '/libs/bootstrap/dist/js/bootstrap.min.js',
+
+                '/assets/dist/main-min.js',
             ],
             css: [
-                '/dist/main.css',
-                '/template/css/bootstrap.min.css',
-                '/template/css/sb-admin.css',
-                // '/template/css/plugins/morris.css',
-                '/template/font-awesome/css/font-awesome.min.css',
+                '/libs/bootstrap/dist/css/bootstrap.min.css',
+                '/libs/bootstrap/dist/css/bootstrap-theme.min.css',
+                '/libs/font-awesome/css/font-awesome.min.css',
+                'https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic',
+                'https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800',
+
+                '/assets/dist/main.css',
             ]
         }
     }

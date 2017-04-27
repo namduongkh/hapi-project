@@ -3,30 +3,30 @@
 const Path = require('path');
 const Glob = require("glob");
 
+var people = { // our "users database" 
+    1: {
+        id: 1,
+        name: 'Jen Jones'
+    }
+};
+
+var people = { // our "users database" 
+    1: {
+        id: 1,
+        name: 'Jen Jones'
+    }
+};
+
 module.exports = function(server) {
     server.register([{
         register: require('vision')
     }, {
         register: require('inert')
     }, {
-        register: require('good'),
-        options: {
-            reporters: {
-                console: [{
-                    module: 'good-squeeze',
-                    name: 'Squeeze',
-                    args: [{
-                        response: '*',
-                        log: '*'
-                    }]
-                }, {
-                    module: 'good-console'
-                }, 'stdout']
-            }
-        }
-    }, {
         // Plugin xử lý để load các file tĩnh
         register: require('./static.js')
+    }, {
+        register: require('hapi-auth-cookie')
     }, {
         // Kết nối mongodb
         register: require('./mongo.js')
@@ -34,6 +34,14 @@ module.exports = function(server) {
         if (err) {
             server.log(['error', 'server'], err);
         }
+
+        server.auth.strategy('jwt', 'jwt', {
+            key: 'NeverShareYourSecret', // Never Share your secret key 
+            validateFunc: validate, // validate function defined above 
+            verifyOptions: { algorithms: ['HS256'] } // pick a strong algorithm 
+        });
+
+        server.auth.default('jwt');
 
         let config = server.configManager;
 
@@ -45,9 +53,10 @@ module.exports = function(server) {
             helpersPath: global.BASE_PATH + '/app/views/helpers',
             relativeTo: global.BASE_PATH + '/app/modules',
             partialsPath: global.BASE_PATH + '/app/views/layouts/partials',
-            layoutPath: global.BASE_PATH + '/app/views/layouts/layouts',
+            layoutPath: global.BASE_PATH + '/app/views/layouts',
             layout: true,
             context: {
+                settings: config.get("web.settings"),
                 assets: config.get("web.assets"),
                 meta: {
                     title: 'Helper'

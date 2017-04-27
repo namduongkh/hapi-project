@@ -11,8 +11,8 @@ exports.register = function(server, options, next) {
                 path: '.',
                 redirectToSlash: true,
                 index: true
-            }
-        }
+            },
+        },
     });
     return next();
 };
