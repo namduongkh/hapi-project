@@ -8,8 +8,14 @@ exports.dangNhap = {
             }
         });
     },
-    auth: { mode: 'try' },
-    plugins: {
-        'hapi-auth-cookie': { redirectTo: false }
-    }
+};
+
+exports.dangKy = {
+    handler: function(request, reply) {
+        return reply.view('web-user/views/register', {
+            meta: {
+                title: "Đăng ký"
+            }
+        });
+    },
 };

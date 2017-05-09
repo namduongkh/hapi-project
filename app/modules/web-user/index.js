@@ -11,6 +11,12 @@ exports.register = function(server, options, next) {
         config: Controller.dangNhap
     });
 
+    server.route({
+        method: 'GET',
+        path: '/dang-ky',
+        config: Controller.dangKy
+    });
+
     next();
 };
 

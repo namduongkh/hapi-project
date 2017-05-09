@@ -11,6 +11,18 @@ exports.register = function(server, options, next) {
         config: Controller.index
     });
 
+    server.route({
+        method: 'POST',
+        path: '/api/user/login',
+        config: Controller.login
+    });
+
+    server.route({
+        method: 'POST',
+        path: '/api/user/register',
+        config: Controller.register
+    });
+
     next();
 };
 

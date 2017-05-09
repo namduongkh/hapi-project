@@ -1,13 +1,13 @@
+var apiPath = window.location.origin;
+if (window.location.port) {
+    apiPath = window.settings.services.apiUrl;
+}
+
 (function() {
     'use strict';
 
-    var API_PATH = window.location.origin;
-    if (window.location.port) {
-        API_PATH = window.settings.services.apiUrl;
-    }
-
-    const dependencyModules = [];
+    const dependencyModules = ["User", "ngCookies"];
 
     angular
-        .module("HapiApp", dependencyModules)
+        .module("HapiApp", dependencyModules);
 })();

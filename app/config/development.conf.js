@@ -15,8 +15,10 @@ module.exports = {
                 '/libs/jquery/dist/jquery.min.js',
                 '/libs/angular/angular.min.js',
                 '/libs/bootstrap/dist/js/bootstrap.min.js',
+                '/libs/angular-cookies/angular-cookies.min.js',
 
-                '/assets/dist/main-min.js',
+                '/assets/js/app.js',
+                '/assets/js/config.js',
             ],
             css: [
                 '/libs/bootstrap/dist/css/bootstrap.min.css',
@@ -25,7 +27,7 @@ module.exports = {
                 'https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic',
                 'https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800',
 
-                '/assets/dist/main.css',
+                '/assets/css/styles.css',
             ]
         }
     }

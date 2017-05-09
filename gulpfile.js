@@ -1,93 +1,100 @@
-var nodemon = require('gulp-nodemon');
-var gulp = require('gulp');
-var browserSync = require('browser-sync').create();
-var browserify = require('gulp-browserify');
-var concat = require('gulp-concat');
-var sass = require('gulp-sass');
-var cleanCSS = require('gulp-clean-css');
-var concatCss = require('gulp-concat-css');
-var minify = require('gulp-minify');
-const babel = require('gulp-babel');
+const gulp = require('gulp');
+var babel = require('gulp-babel');
+const uglify = require('gulp-uglify');
+const pump = require('pump');
+const concat = require('gulp-concat');
+const nodemon = require('gulp-nodemon');
+const browserSync = require('browser-sync');
+const gulpLoadPlugins = require('gulp-load-plugins');
+const cleanCSS = require('gulp-clean-css');
+const concatCss = require('gulp-concat-css');
+const ngAnnotate = require('gulp-ng-annotate');
+const strip = require('gulp-strip-comments');
+const sass = require('gulp-sass');
+const stripDebug = require('gulp-strip-debug');
 var purgeSourcemaps = require('gulp-purge-sourcemaps');
 
-gulp.task('nodemon', () => {
-    nodemon({
-        script: 'app.js',
-        ext: 'js html scss json css',
-        env: {
-            'NODE_ENV': 'development'
-        }
-    })
-});
-// process JS files and return the stream.
-// js in client
-gulp.task('js', function() {
-    return gulp.src([
-            'public/assets/js/**/*.js',
-            'public/assets/js/*.js',
-            'app/modules/*/views/js/config.js',
-            'app/modules/*/views/js/*.js'
+const $ = gulpLoadPlugins();
+const minDir = './public/assets/min';
+const cssDir = './public/assets/css';
+const jsDir = './public/assets/js';
+const libDir = './public/libs';
+
+gulp.task('minjs', () => {
+    gulp
+        .src([
+            jsDir + '/app.js',
+            jsDir + '/config.js',
         ])
-        .pipe(concat('main.js'))
-        .pipe(babel({
-            presets: ['es2015']
+        .pipe($.plumber({
+            errorHandler: function(error) {
+                console.log(error);
+                this.emit('end');
+            }
         }))
+        .pipe(ngAnnotate())
+        .pipe(concat('app.min.js'))
+        .pipe(gulp.dest(minDir))
+        .pipe(babel({ presets: ['es2015'], compact: false }))
         .pipe(purgeSourcemaps())
-        .pipe(browserify())
-        .pipe(minify())
-        .pipe(gulp.dest('./public/assets/dist'))
+        .pipe(uglify())
+        // .pipe(stripDebug())
+        .pipe(gulp.dest(minDir));
 });
 
-gulp.task('sass', function() {
-    return gulp.src(['public/assets/**/*.css', 'app/modules/*/views/css/*.scss'])
-        .pipe(sass())
-        .pipe(concatCss('main.css'))
+gulp.task('mincss', function() {
+    gulp.src([
+            cssDir + '/style.css'
+        ])
+        .pipe(concatCss('app.min.css'))
+        .pipe(gulp.dest(minDir))
         .pipe(cleanCSS())
-        .pipe(gulp.dest('./public/assets/dist'))
-        .pipe(browserSync.stream());
+        .pipe(gulp.dest(minDir));
 });
-
-// create a task that ensures the `js` task is complete before
-// reloading browsers
-gulp.task('js-watch', ['js'], function(done) {
-    browserSync.reload();
-    done();
-});
-
-// use default task to launch Browsersync and watch JS files
-// gulp.task('serve', ['js', 'sass'], function() {
-//     // Serve files from the root of this project
-//     browserSync.init({
-//         server: {
-//             baseDir: "./",
-//             index: "./app/index.html",
-//         }
-//     });
-
-//     // add browserSync.reload to the tasks array to make
-//     // all browsers reload after tasks are complete.
-//     gulp.watch(['app/js/*/*js', 'app/js/*js'], ['js-watch']);
-//     gulp.watch("app/css/*.scss", ['sass']);
-//     gulp.watch("app/*.html").on('change', browserSync.reload);
-// });
 
 gulp.task('browser-sync', ['nodemon'], function() {
     browserSync.init(null, {
         proxy: "http://localhost:3000",
-        // files: ["public/**/*.*", "modules/**/*.*"],
-        // browser: "google chrome",
+        files: ["public/**/*.*", "app/**/*.*"],
+        browser: "google chrome",
         port: 3090
     });
 });
 
-gulp.task('default', ['nodemon', 'browser-sync', 'sass', 'js'], function() {
-    gulp.watch('app/modules/*/views/**/*.scss', ['sass']);
-    gulp.watch([
-        'public/assets/js/**/*.js',
-        'public/assets/js/*.js',
-        'app/modules/*/views/js/config.js',
-        'app/modules/*/views/js/*.js'
-    ], ['js']);
-    gulp.watch(['app/views/layouts/**/*.html', 'app/modules/**/*.html'])
-        .on('change', browserSync.reload);
+
+gulp.task('nodemon', function() {
+    nodemon({
+        script: 'app.js',
+        ext: 'js html',
+        env: { 'NODE_ENV': 'development' }
+    })
+});
+
+
+gulp.task('styles', function() {
+    gulp.src(['public/assets/css/libs/*.css', 'app/modules/web*/views/css/*.scss'])
+        .pipe(sass().on('error', sass.logError))
+        .pipe(concat('styles.css'))
+        .pipe(gulp.dest(cssDir));
+});
+
+gulp.task('javascripts', () => {
+    gulp.src(['public/assets/js/libs/*.js', 'app/modules/web*/views/js/*.js'])
+        .pipe($.plumber({
+            errorHandler: function(error) {
+                console.log(error.toString());
+                this.emit('end');
+            }
+        }))
+        .pipe(ngAnnotate())
+        .pipe(concat('app.js'))
+        .pipe(gulp.dest(jsDir));
+});
+
+gulp.task('build', ['minjs', 'mincss']);
+gulp.task('build_portal', ['minjs_portal', 'mincss_portal']);
+
+gulp.task('default', ['nodemon', 'browser-sync', 'styles', 'javascripts'], function() {
+    gulp.watch(['public/assets/css/libs/*.css', 'app/modules/**/views/css/*.scss'], ['styles']);
+    gulp.watch(['public/assets/js/libs/*.js', 'app/modules/**/views/js/*.js'], ['javascripts']);
 });
