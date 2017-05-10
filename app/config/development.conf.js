@@ -19,6 +19,7 @@ module.exports = {
 
                 '/assets/js/app.js',
                 '/assets/js/config.js',
+                // '/assets/min/app.min.js',
             ],
             css: [
                 '/libs/bootstrap/dist/css/bootstrap.min.css',
@@ -28,6 +29,7 @@ module.exports = {
                 'https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800',
 
                 '/assets/css/styles.css',
+                // '/assets/min/app.min.css',
             ]
         }
     }

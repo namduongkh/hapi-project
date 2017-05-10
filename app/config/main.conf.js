@@ -49,9 +49,6 @@ module.exports = {
             user: {
                 login: "/dang-nhap"
             },
-            notFound: {
-                url: "/khong-tim-thay-noi-dung"
-            }
         }
     }
 };

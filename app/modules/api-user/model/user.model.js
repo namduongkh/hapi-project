@@ -7,7 +7,6 @@ var mongoose = require('mongoose'),
 const SALT_LENGTH = 9;
 
 var UserSchema = new Schema({
-
     name: {
         type: String,
         trim: true,

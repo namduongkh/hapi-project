@@ -44,7 +44,7 @@ gulp.task('minjs', () => {
 
 gulp.task('mincss', function() {
     gulp.src([
-            cssDir + '/style.css'
+            cssDir + '/styles.css'
         ])
         .pipe(concatCss('app.min.css'))
         .pipe(gulp.dest(minDir))

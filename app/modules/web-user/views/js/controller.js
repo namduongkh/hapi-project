@@ -4,9 +4,19 @@
     angular.module("User")
         .controller("UserController", UserController);
 
-    function UserController(UserService, $cookies) {
+    function UserController(UserService, $cookies, $rootScope) {
         var userCtrl = this;
-        userCtrl.name = "Phong";
+        userCtrl.accountInfo = {};
+
+        userCtrl.getAccount = function() {
+            UserService.account().then(function(resp) {
+                if (resp.status == 200) {
+                    userCtrl.accountInfo = resp.data;
+                }
+            });
+        };
+
+        userCtrl.getAccount();
 
         userCtrl.login = function() {
             UserService.login({
@@ -18,6 +28,18 @@
                     $cookies.put('token', resp.data.token, {
                         path: "/"
                     });
+                    window.location.reload();
+                });
+        };
+
+        userCtrl.logout = function() {
+            UserService.logout()
+                .then(function(res) {
+                    $cookies.remove('token');
+                    window.location.reload();
+                }).catch(function(res) {
+                    $cookies.remove('token');
+                    window.location.reload();
                 });
         };
 
@@ -27,7 +49,8 @@
                     password: userCtrl.form.password,
                 })
                 .then(function(resp) {
-                    console.log("Resp", resp);
+                    // console.log("Resp", resp);
+                    window.location.reload();
                 });
         };
     }

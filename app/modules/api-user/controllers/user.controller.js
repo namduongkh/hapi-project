@@ -66,3 +66,52 @@ exports.register = {
         });
     }
 };
+
+exports.logout = {
+    auth: 'jwt',
+    handler: function(request, reply) {
+        let cookieOptions = request.server.configManager.get('web.cookieOptions');
+        reply({ status: true }).header("Authorization", '')
+            .unstate('token', cookieOptions);
+    },
+};
+
+exports.account = {
+    pre: [{
+        method: getAccountUser,
+        assign: 'user'
+    }],
+    auth: 'jwt',
+    handler: function(request, reply) {
+        const user = request.pre.user;
+        if (user) {
+            if (user.password) {
+                user.password = "haspassword";
+            }
+            return reply(user);
+        }
+        reply(Boom.unauthorized('User is not found'));
+    }
+};
+
+function getAccountUser(request, reply) {
+    if (request.auth.isAuthenticated) {
+        const id = request.auth.credentials.id;
+        let promise = User
+            .findOne({
+                _id: id
+            })
+            .lean();
+        promise
+            .then(function(user) {
+                // console.log("User:", user);
+                reply(user)
+            })
+            .catch(function(err) {
+                request.log(['error'], err);
+                return reply.continue();
+            });
+    } else {
+        return reply(false);
+    }
+}
