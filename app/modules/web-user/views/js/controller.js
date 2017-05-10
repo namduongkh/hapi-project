@@ -4,7 +4,7 @@
     angular.module("User")
         .controller("UserController", UserController);
 
-    function UserController(UserService, $cookies, $rootScope) {
+    function UserController(UserService, $cookies, $rootScope, toastr, $timeout) {
         var userCtrl = this;
         userCtrl.accountInfo = {};
 
@@ -49,8 +49,14 @@
                     password: userCtrl.form.password,
                 })
                 .then(function(resp) {
-                    // console.log("Resp", resp);
-                    window.location.reload();
+                    console.log("Resp", resp);
+                    // window.location.reload();
+                    toastr.success("Đăng ký tài khoản thành công!", "Thông báo!");
+                    $timeout(userCtrl.login, 2000);
+                })
+                .catch(function(resp) {
+                    var error = resp.data;
+                    toastr.error(error.message || error, "Thông báo!");
                 });
         };
     }

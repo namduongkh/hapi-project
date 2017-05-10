@@ -21,7 +21,6 @@ exports.getCredentials = function(request, reply) {
             response.source.context.credentials = {};
         }
         let credentials = request.auth.credentials;
-
         // check roles to post collection
         if (credentials) {
             response.source.context.credentials = credentials;

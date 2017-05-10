@@ -72,14 +72,14 @@ gulp.task('nodemon', function() {
 
 
 gulp.task('styles', function() {
-    gulp.src(['public/assets/css/libs/*.css', 'app/modules/web*/views/css/*.scss'])
+    gulp.src(['app/modules/web*/views/css/*.scss'])
         .pipe(sass().on('error', sass.logError))
         .pipe(concat('styles.css'))
         .pipe(gulp.dest(cssDir));
 });
 
 gulp.task('javascripts', () => {
-    gulp.src(['public/assets/js/libs/*.js', 'app/modules/web*/views/js/*.js'])
+    gulp.src(['app/modules/web*/views/js/*.js'])
         .pipe($.plumber({
             errorHandler: function(error) {
                 console.log(error.toString());
@@ -95,6 +95,6 @@ gulp.task('build', ['minjs', 'mincss']);
 gulp.task('build_portal', ['minjs_portal', 'mincss_portal']);
 
 gulp.task('default', ['nodemon', 'browser-sync', 'styles', 'javascripts'], function() {
-    gulp.watch(['public/assets/css/libs/*.css', 'app/modules/**/views/css/*.scss'], ['styles']);
-    gulp.watch(['public/assets/js/libs/*.js', 'app/modules/**/views/js/*.js'], ['javascripts']);
+    gulp.watch(['app/modules/**/views/css/*.scss'], ['styles']);
+    gulp.watch(['app/modules/**/views/js/*.js'], ['javascripts']);
 });

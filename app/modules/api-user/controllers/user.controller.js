@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const User = mongoose.model('User');
 const Boom = require('boom');
 const JWT = require('jsonwebtoken');
+const ErrorHandler = require("../../../utils/error.js");
 
 exports.index = {
     handler: function(request, reply) {
@@ -31,6 +32,7 @@ exports.login = {
                             valid: true, // this will be set to false when the person logs out
                             id: user._id, // a random session id,
                             name: user.name,
+                            email: user.email,
                             scopes: user.roles,
                             exp: new Date().getTime() + 30 * 60 * 1000 // expires in 30 minutes time
                         };
@@ -38,7 +40,7 @@ exports.login = {
                         var token = JWT.sign(session, secret); // synchronous
                         reply({
                             token: token,
-                            phone: user.phone,
+                            // phone: user.phone,
                             id: user._id
                         }).header("Authorization", token).state("token", token, cookieOptions);
                     }
@@ -60,8 +62,8 @@ exports.register = {
             promise.then(user => {
                 return reply(user);
             }).catch(err => {
-                console.log("Err", err);
-                return reply(false);
+                // console.log("Err", err);
+                return reply(Boom.badRequest(ErrorHandler.getErrorMessage(err)));
             });
         });
     }
@@ -81,7 +83,7 @@ exports.account = {
         method: getAccountUser,
         assign: 'user'
     }],
-    auth: 'jwt',
+    // auth: 'jwt',
     handler: function(request, reply) {
         const user = request.pre.user;
         if (user) {

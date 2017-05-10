@@ -6,8 +6,11 @@ if (window.location.port) {
 (function() {
     'use strict';
 
-    const dependencyModules = ["User", "ngCookies"];
+    const dependencyModules = ["User", "ngCookies", "ngAnimate", "toastr", "angular-loading-bar"];
 
     angular
-        .module("HapiApp", dependencyModules);
+        .module("HapiApp", dependencyModules)
+        .config(function($httpProvider) {
+            $httpProvider.defaults.withCredentials = true;
+        });
 })();

@@ -3,47 +3,26 @@
 const Path = require('path');
 const Glob = require("glob");
 
-// bring your own validation function
-var validate = function(decoded, request, callback) {
-    // console.log("Decode", decoded);
-    // do your checks to see if the person is valid
-    if (decoded && decoded.valid) {
-        return callback(null, true);
-    } else {
-        return callback(null, false);
-    }
-};
-
 module.exports = function(server) {
     server.register([{
         register: require('vision')
     }, {
         register: require('inert')
     }, {
+        // Kết nối mongodb
+        register: require('./mongo.js')
+    }, {
         // Plugin xử lý để load các file tĩnh
         register: require('./static.js')
     }, {
-        register: require('hapi-auth-jwt2')
-    }, {
-        // Kết nối mongodb
-        register: require('./mongo.js')
+        // Plugin xử lý xác thực user
+        register: require('./auth.js')
     }], (err) => {
         if (err) {
             server.log(['error', 'server'], err);
         }
-
         let config = server.configManager;
 
-        server.auth.strategy('jwt', 'jwt', 'try', {
-            key: config.get('web.jwt.secret'), // Never Share your secret key 
-            validateFunc: validate, // validate function defined above 
-            verifyOptions: {
-                ignoreExpiration: true,
-                algorithms: ['HS256']
-            } // pick a strong algorithm 
-        });
-
-        // server.auth.default('jwt');
         // Cài đặt template engine: Đang sử dụng handlebars
         server.views({
             engines: {

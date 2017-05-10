@@ -22,8 +22,8 @@ module.exports = {
             secret: 'L7FWdNnQU7cfmQ87WuucQFK3YZvNBuvc'
         },
         connections: [{
-                port: process.env.BIDY_WEB_PORT || 3000,
-                labels: ['web'],
+                port: process.env.WEB_PORT || 3000,
+                labels: 'web',
                 routes: {
                     cors: {
                         origin: ['*'],
@@ -35,7 +35,7 @@ module.exports = {
                 }
             },
             {
-                port: process.env.BIDY_API_PORT || 3100,
+                port: process.env.API_PORT || 3100,
                 labels: 'api',
                 routes: {
                     cors: {
