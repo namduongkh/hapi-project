@@ -1,2 +1,5 @@
 .container {
   margin-top: 80px; }
+
+.form-group {
+  max-width: 350px; }

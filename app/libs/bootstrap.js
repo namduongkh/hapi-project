@@ -17,6 +17,11 @@ module.exports = function(server) {
     }, {
         // Plugin xử lý xác thực user
         register: require('./auth.js')
+    }, {
+        register: require('hapi-io'),
+        options: {
+            connectionLabel: 'api'
+        }
     }], (err) => {
         if (err) {
             server.log(['error', 'server'], err);
@@ -33,13 +38,7 @@ module.exports = function(server) {
             partialsPath: global.BASE_PATH + '/app/views/layouts/partials',
             layoutPath: global.BASE_PATH + '/app/views/layouts',
             layout: true,
-            context: {
-                settings: config.get("web.settings"),
-                assets: config.get("web.assets"),
-                meta: {
-                    title: 'Helper'
-                }
-            }
+            context: config.get("web.context")
         });
 
         // Load các model trong các module

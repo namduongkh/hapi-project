@@ -6,7 +6,7 @@ if (window.location.port) {
 (function() {
     'use strict';
 
-    const dependencyModules = ["User", "ngCookies", "ngAnimate", "toastr", "angular-loading-bar"];
+    const dependencyModules = ["User", "Core", "ngCookies", "ngAnimate", "toastr", "angular-loading-bar"];
 
     angular
         .module("HapiApp", dependencyModules)

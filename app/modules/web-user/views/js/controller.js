@@ -4,7 +4,7 @@
     angular.module("User")
         .controller("UserController", UserController);
 
-    function UserController(UserService, $cookies, $rootScope, toastr, $timeout) {
+    function UserController(UserService, $cookies, $rootScope, toastr, $timeout, PubSub) {
         var userCtrl = this;
         userCtrl.accountInfo = {};
 

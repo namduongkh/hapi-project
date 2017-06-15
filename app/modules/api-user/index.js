@@ -6,12 +6,6 @@ exports.register = function(server, options, next) {
     var configManager = server.plugins['hapi-kea-config'];
 
     server.route({
-        method: 'GET',
-        path: '/',
-        config: Controller.index
-    });
-
-    server.route({
         method: 'POST',
         path: '/api/user/login',
         config: Controller.login
@@ -33,6 +27,12 @@ exports.register = function(server, options, next) {
         method: 'GET',
         path: '/api/user/account',
         config: Controller.account
+    });
+
+    server.route({
+        method: 'GET',
+        path: '/api/user/generateAdmin',
+        config: Controller.generateAdmin
     });
 
     next();
